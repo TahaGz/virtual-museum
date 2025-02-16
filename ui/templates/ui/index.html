@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TN Time Travel</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ui/css/style.css' %}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+    
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-container">
+        <video class="video-bg2" autoplay loop muted>
+            <source src="{% static 'ui/videos/background-3.mp4' %}" type="video/mp4">
+
+        </video>
+    </div>
+    <h1>Meet the Great Tunisian Historical Figures</h1>
+
+    
+    <!-- Avatars container -->
+    <div class="cards-container">
+        <a href="{% url 'habib_chatbot' %}" class="card-link">
+            <div class="card">
+                <video class="video-bg" autoplay loop muted>
+                    <source src="{% static 'ui/videos/figure1.mp4' %}" type="video/mp4">
+                </video>
+                <div class="card-content">
+                    <h2>Habib Bourguiba</h2>
+                    <p>The father of sociology and historiography.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="{% url 'hannibal_chatbot' %}" class="card-link">
+            <div class="card">
+                <video class="video-bg" autoplay loop muted>
+                    <source src="{% static 'ui/videos/figure2.mp4' %}" type="video/mp4">
+                </video>
+                <div class="card-content">
+                    <h2>Hannibal Barca</h2>
+                    <p>The legendary Carthaginian general.</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="{% url 'elissa_chatbot' %}" class="card-link">
+            <div class="card">
+                <video class="video-bg" autoplay loop muted>
+                    <source src="{% static 'ui/videos/figure3.mp4' %}" type="video/mp4">
+                </video>
+                <div class="card-content">
+                    <h2>Elissa (Queen Dido)</h2>
+                    <p>The founder of ancient Carthage.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div>
+        <p class="choose-message">
+            <i class="fa-solid fa-hand-pointer"></i> Choose a figure
+        </p>
+    </div>
+
+
+    <h1>AR/VR Models Conception</h1>
+
+    <!-- 3D models container -->
+    <div class="models-container">
+        <div class="model-card" data-model="{% static 'ui/models/carthaginian_warrior.glb' %}">
+            <div class="model-viewer" id="model1"></div>
+            <div class="model-content">
+                <h2>Carthaginian Warrior</h2>
+                <p>An ancient warrior from Carthage.</p>
+            </div>
+        </div>
+
+        <div class="model-card" data-model="{% static 'ui/models/theater.glb' %}">
+            <div class="model-viewer" id="model2"></div>
+            <div class="model-content">
+                <h2>Roman Theater</h2>
+                <p>A theater that romans were know for.</p>
+            </div>
+        </div>
+
+        <div class="model-card" data-model="{% static 'ui/models/person.glb' %}">
+            <div class="model-viewer" id="model3"></div>
+            <div class="model-content">
+                <h2>Arabic figure</h2>
+                <p>An old arabic person.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Load Models -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const models = document.querySelectorAll(".model-card");
+
+            models.forEach((modelCard) => {
+                const modelPath = modelCard.getAttribute("data-model");
+                const container = modelCard.querySelector(".model-viewer");
+
+                load3DModel(container, modelPath);
+            });
+        });
+
+        function load3DModel(container, modelPath) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // ✅ Add proper lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // ✅ Load the GLTF model
+            const loader = new THREE.GLTFLoader();
+            loader.load(modelPath, (gltf) => {
+                const model = gltf.scene;
+
+                // ✅ Automatically center the model
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                model.position.sub(center); // Moves model to center
+
+                // ✅ Adjust scale dynamically to fit the container
+                const size = box.getSize(new THREE.Vector3());
+                const maxDim = Math.max(size.x, size.y, size.z);
+                model.scale.setScalar(2 / maxDim); // Adjust scale dynamically
+
+                scene.add(model);
+                camera.position.set(0, 0, 3); // ✅ Ensure camera is correctly placed
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    model.rotation.y += 0.005; // ✅ Auto rotate model
+                    renderer.render(scene, camera);
+                }
+                animate();
+            }, undefined, (error) => {
+                console.error("Error loading model:", error);
+            });
+        }
+    </script>
+
+    
+    
+
+</body>
+</html>

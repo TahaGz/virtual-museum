@@ -1,0 +1,177 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: white;
+    margin: 0;
+    padding: 10px;
+    background: linear-gradient(-45deg, #fff5bd, #8d5306, #663c05, #8d5306, #ffffff);
+    background-size: 500% 500%;
+    animation: gradientBG 15s ease infinite;
+}
+/* video bg */
+/* Video Background - Full Screen */
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Keyframes for Gradient Rotation */
+@keyframes rotateGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* title */
+h1 {
+    background: linear-gradient(45deg, #6a5acd, #ff69b4);
+
+    padding: 10px 10px; /* Adds space around text */
+    border-radius: 10px; /* Rounded corners */
+    display: inline-block; /* Wraps around the text */
+    font-size: 2em; /* Default size */
+    font-weight: bold;
+    color: white; /* Ensures text stands out */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: font-size 0.3s ease, padding 0.3s ease; /* Smooth resizing */
+    margin-bottom: 5px; /* Reduce space below "Hannibal Barca" */
+
+}
+
+h2 {
+    background: linear-gradient(45deg, #6a5acd, #ff69b4);
+    padding: 20px 20px; /* Adds space around text */
+    border-radius: 50px; /* Rounded corners */
+    display: inline-block; /* Wraps around the text */
+    font-size: 0.8em; /* Default size */
+    color: #ffffff; /* Ensures text stands out */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: font-size 0.3s ease, padding 0.3s ease; /* Smooth resizing */
+    transition: transform 0.3s ease-in-out;
+    margin-top: 5px;
+
+}
+h2:hover {
+    transform: scale(1.05);
+}
+
+/* ✅ Automatically scales the h1 font size on smaller screens */
+@media (max-width: 1024px) {
+    h1 {
+        font-size: 1.6em;
+        padding: 10px 10px;
+    }
+    h2 {
+        font-size: 0.6em;
+        padding: 20px 20px;
+    }
+}
+
+
+.cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* ✅ Allows automatic stacking */
+    gap: 30px; /* Keeps space between cards */
+}
+
+
+.video-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.card {
+    position: relative;
+    width: 350px; /* Fixed width */
+    height: 550px; /* Reduce height slightly */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(95, 64, 6, 0.747);
+    cursor: pointer;
+}
+.card-content {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    color: white;
+}
+
+
+
+div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Adds space between the select and button */
+
+}
+
+
+
+/* Style the container */
+/* Style the select dropdown */
+#language-selector {
+    appearance: none; /* Removes default browser styling */
+    background-color: #ffffff;
+    border: 2px solid #db9834; /* Blue border */
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 40px 12px 16px; /* Space for custom arrow */
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom dropdown arrow */
+#language-selector {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='%233498db'%3E%3Cpath d='M7 10l5 5 5-5z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+/* Hover effect */
+#language-selector:hover {
+    border-color: #ff0000;
+}
+
+/* Focus effect */
+#language-selector:focus {
+    border-color: #ff0000;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Style dropdown options */
+#language-selector option {
+    background: #ffffff;
+    color: #333;
+    font-size: 14px;
+}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TN Time Travel</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ui/css/hannibal.css' %}">
+
+    <!-- FontAwesome CDN: for home icons  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body>
+    <!-- Video Background -->
+    <div class="video-container">
+        <video class="video-bg2" autoplay loop muted>
+            <source src="{% static 'ui/videos/background-2.mp4' %}" type="video/mp4">
+
+        </video>
+    </div>
+
+
+    <div>
+        <h1>Hannibal Barca</h1>
+    </div>
+    <!-- home button & icon -->
+    <a href="{% url 'home' %}">
+        <h2>
+            <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+        </h2>
+    </a>
+    
+    <!-- Avatars container -->
+    <div class="cards-container">
+        <div class="card">
+            <video id="avatar-video" class="video-bg" autoplay loop muted>
+                <source id="avatar-video-source" src="{% static 'ui/videos/avatars/hannibal-idle.mp4' %}" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- language selection -->
+    <br>
+    <div>
+        <input id="user-input" type="text" placeholder="Type your message..." />
+        <button id="send-button">
+            <i class="fa fa-paper-plane"></i>
+        </button>
+        <!-- Speak button -->
+        <button id="hold-to-talk">
+            <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
+        </button>
+
+    </div>
+
+    
+    <!-- User Input Field & Send Button -->
+    <div>
+        <select id="language-selector">
+            <option value="en-US">English</option>
+            <option value="fr-FR" selected>Français</option>
+            <option value="ar-SA">عربي</option>
+        </select>
+    </div>
+
+    <!-- User Question and Bot Answer -->
+    <p>User: <span id="user-text"></span></p>
+    <p>Hannibal Barca: <span id="bot-response"></span></p>
+
+    <style>
+        /* Style for Input & Send Button */
+        #user-input {
+            width: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #0084ff;
+            border-radius: 5px;
+        }
+
+        #send-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        #send-button:hover {
+            background-color: #005ecb;
+        }
+    </style>
+
+    
+
+    <!-- style aba3thou yzamr -->
+    <style>
+        #hold-to-talk {
+            width: 50px;
+            height: 50px;
+            font-size: 10px;
+            border-radius: 50%;
+            border: none;
+            background-color: #0084ff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+    
+        #hold-to-talk.recording {
+            background-color: red;
+        }
+    </style>
+    
+
+
+    <!-- personality for bot + gender preferance (TTS) -->
+    <input type="hidden" id="bot-personality" value="hannibal">
+    <!-- <input type="hidden" id="bot-voice-gender" value="male"> -->
+
+
+    <!-- speech to text + chatbot response -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let personality = document.getElementById("bot-personality")?.value;
+            let languageSelector = document.getElementById("language-selector");
+            let holdButton = document.getElementById("hold-to-talk");
+            let userTextElement = document.getElementById("user-text");
+            let botResponseElement = document.getElementById("bot-response");
+            let userInput = document.getElementById("user-input");
+            let sendButton = document.getElementById("send-button");
+    
+            let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.error("❌ Speech Recognition API not supported.");
+                return;
+            }
+    
+            let recognition = new SpeechRecognition();
+            recognition.interimResults = false;
+            recognition.continuous = true;
+    
+            let isRecording = false;
+    
+            // ✅ Set default language and apply immediately
+            if (languageSelector) {
+                languageSelector.value = "fr-FR"; 
+                recognition.lang = languageSelector.value;  // ✅ Apply directly
+                console.log(`🌍 Default language set to: ${recognition.lang}`);
+            }
+    
+            // ✅ Listen for language selection change
+            if (languageSelector) {
+                languageSelector.addEventListener("change", () => {
+                    recognition.lang = languageSelector.value;
+                    console.log(`🌍 Language changed to: ${recognition.lang}`);
+                });
+            }
+    
+            // 🎙️ Click button to start/stop recording
+            if (holdButton) {
+                holdButton.addEventListener("click", () => {
+                    if (!isRecording) {
+                        startRecording();
+                    }
+                });
+            }
+    
+            function startRecording() {
+                isRecording = true;
+                holdButton.classList.add("recording"); 
+                console.log("🎙️ Speech recognition started...");
+                recognition.start();
+                    // ✅ Automatically stop after 5 seconds
+                    setTimeout(() => {
+                        if (isRecording) {
+                            stopRecording();
+                        }
+                    }, 4000);  // 5000ms = 5 seconds
+            }
+    
+            function stopRecording() {
+                isRecording = false;
+                holdButton.classList.remove("recording"); 
+                console.log("🛑 Speech recognition stopped.");
+                recognition.stop();
+            }
+    
+            // 🎙️ Process speech-to-text result
+            recognition.onresult = (event) => {
+                let transcript = event.results[0][0].transcript;
+                console.log(`🗣️ Detected Speech: ${transcript}`);
+                if (userTextElement) userTextElement.innerText = transcript;
+                sendTextToBackend(transcript);
+            };
+    
+            recognition.onerror = (event) => {
+                console.error("❌ Speech Recognition Error:", event.error);
+                stopRecording();
+            };
+    
+            // ✅ Send Text Input to Backend
+            sendButton.addEventListener("click", () => {
+                let typedText = userInput.value.trim();
+                if (typedText) {
+                    console.log(`⌨️ User Typed: "${typedText}"`);
+                    if (userTextElement) userTextElement.innerText = typedText;
+                    sendTextToBackend(typedText);
+                    userInput.value = ""; // Clear input field after sending
+                }
+            });
+    
+            // ✅ Function to Send Data to Backend (Speech & Text)
+            function sendTextToBackend(text) {
+                let selectedLanguage = languageSelector?.value; // Default to English
+                console.log(`📤 Sending to Backend: "${text}" in ${selectedLanguage}`);
+    
+                fetch(`/api/chatbot/${personality}/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        user_text: text, 
+                        language: selectedLanguage 
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(`📩 Received Bot Response: "${data.bot_response}"`);
+                    if (botResponseElement) botResponseElement.innerText = data.bot_response;
+        
+                    // ✅ Call `generate_speech` API to get the speech file
+                    streamAndPlaySpeech(data.bot_response, selectedLanguage, "male");
+                })
+                .catch(error => console.error("❌ Backend Request Failed:", error));
+            }
+        
+            function streamAndPlaySpeech(text, language, gender) {
+                console.log(`🎵 Generating & streaming speech for: "${text}" in ${language} (${gender})`);
+
+                fetch(`/api/generate-speech/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text: text, language: language, gender: gender })  // ✅ Send gender
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.blob();  // Convert response to a blob
+                })
+                .then(blob => {
+                    let audioUrl = URL.createObjectURL(blob);
+                    let audio = new Audio(audioUrl);
+                    // ✅ Get video elements properly
+                    let videoElement = document.getElementById("avatar-video");
+                    let videoSource = document.getElementById("avatar-video-source");
+
+                    if (videoElement && videoSource) {
+                        console.log("🟢 Switching to Talking Avatar...");
+                        videoSource.src = "/static/ui/videos/avatars/hannibal-talk.mp4";  // ✅ Set talking video
+                        videoElement.load();  // ✅ Reload video to apply changes
+                        videoElement.play();
+                    } else {
+                        console.error("❌ Video element or source not found!");
+                    }
+
+                    audio.play();  // ✅ Play the streamed speech
+                    console.log("🎵 Playing streamed speech...");
+
+                    // ✅ When audio ends, switch back to "idle" video
+                    audio.onended = function() {
+                        if (videoElement && videoSource) {
+                            console.log("🔵 Switching back to Idle Avatar...");
+                            videoSource.src = "/static/ui/videos/avatars/hannibal-idle.mp4";  // ✅ Set idle video
+                            videoElement.load();  // ✅ Reload video to apply changes
+                            videoElement.play();
+                        }
+                    };
+                })
+                .catch(error => console.error("❌ Speech Streaming Failed:", error));
+            }
+
+        
+        });
+    </script>
+
+    
+
+
+
+
+
+</body>
+</html>

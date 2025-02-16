@@ -1,0 +1,44 @@
+# Ignore Python compiled files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore virtual environment
+.env/
+venv/
+env/
+
+# Ignore IDE/Editor files
+.vscode/
+.idea/
+*.swp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore database files
+db.sqlite3
+*.sqlite3
+
+# Ignore environment variables
+.env
+*.env
+
+# Ignore static and media files (collected or uploaded)
+staticfiles/
+media/
+
+# Ignore compiled assets
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore deployment files
+*.bak
+*.old

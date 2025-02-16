@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TN Time Traveler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(-45deg, #fff5bd, #8d5306, #663c05, #8d5306, #ffffff);
+            background-size: 500% 500%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        /* Fullscreen Video Background */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Main Content */
+        .content {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            color: white;
+        }
+
+        /* Explore Button */
+        .explore-btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ff0000, #ff8282);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .explore-btn:hover {
+            background: linear-gradient(45deg, #ff8282, #ff0000);
+        }
+
+
+        .video-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-intro {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            mix-blend-mode: screen; /* Blends black background to transparent */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Video Background -->
+    <div class="video-container">
+        <video class="video-bg" autoplay loop muted>
+            <source src="{% static 'ui/videos/background.mp4' %}" type="video/mp4">
+        </video>
+            <!-- Intro Video (on top) -->
+        <video class="video-intro" autoplay loop muted>
+            <source src="{% static 'ui/videos/background-intro.mp4' %}" type="video/mp4">
+        </video>
+    </div>
+
+
+
+    <!-- Main Content -->
+    <div class="content">
+        <a href="{% url 'home' %}">
+            <button class="explore-btn">Explore</button>
+        </a>
+    </div>
+
+</body>
+</html>
