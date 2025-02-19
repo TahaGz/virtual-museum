@@ -28,8 +28,8 @@ def elissa_chatbot(request):
     return render(request, "ui/elissa.html")
 
 # ✅ Load API keys directly (NOT recommended for production)
-GEMINI_API_KEY = "AIzaSyBbDmFyN0ppgxzY35SDt80KImLkSQNEmzQ" 
-ELEVENLABS_API_KEY = "sk_0885facdc4819bf5c9359ada936305ac7e2ddf2e1facca16"
+GEMINI_API_KEY = "your-api-key" 
+ELEVENLABS_API_KEY = "your-api-key"
 
 
 # Configure Gemini API
